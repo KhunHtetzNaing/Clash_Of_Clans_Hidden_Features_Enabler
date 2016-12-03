@@ -1,0 +1,161 @@
+﻿Version=6.3
+NumberOfModules=2
+Module1=Starter
+Module2=Install
+Build1=Default,com.htetznaing.coctool
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="19"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~'AdMob~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.version"~\n~  android:value="@integer/google_play_services_version"/>~\n~<activity android:name="com.google.android.gms.ads.AdActivity"~\n~  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>~\n~~\n~)~\n~'End of AdMob
+IconFile=
+NumberOfFiles=9
+File1=bg.png
+File2=buildings.csv
+File3=icon.png
+File4=install.png
+File5=restore.png
+File6=root.png
+File7=Supercell-magic-webfont.ttf
+File8=trap.png
+File9=traps.csv
+NumberOfLibraries=6
+Library1=core
+Library2=mlfiles
+Library3=phone
+Library4=admob
+Library5=mwadmobinterstitial2 (2)
+Library6=animatetext
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: COC Show Traps and Teslas Enabler!
+	#VersionCode: 1
+	#VersionName: 1.0
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: unspecified
+	#CanInstallToExternalStorage: False
+	#AdditionalRes: D:\Android\android-sdk\extras\google\google-play-services\libproject\google-play-services_lib\res, com.google.android.gms
+#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: False
+	#IncludeTitle: True
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+Dim t,t1 As Timer
+End Sub
+
+Sub Globals
+	Dim b,b1 As Button
+	Dim bbg,b1bg As BitmapDrawable
+	Dim ml As MLfiles
+	Dim Banner As AdView
+	Dim Interstitial As mwAdmobInterstitial
+	Dim p As Phone
+	Dim lb1,lb2 As Label
+	Dim ani,ani1 As AnimateText
+	Dim coc As Typeface
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	coc = Typeface.LoadFromAssets("Supercell-magic-webfont.ttf")
+lb1.Initialize("lb1")
+lb1.Typeface = coc
+
+lb1.Gravity = Gravity.CENTER
+lb2.Initialize("lb2")
+lb2.Typeface = coc
+lb2.Gravity = Gravity.CENTER
+
+Activity.AddView(lb1,2%x,2%y,98%x,5%y)
+Activity.AddView(lb2,2%x,(lb1.Top+lb1.Height)+1%y,98%x,5%y)
+ani.initialize("ani",Me,300)
+ani1.initialize("ani1",Me,300)
+
+ani.Run("Show All Hidden Features",lb1)
+ani.Endable = True
+
+	Activity.Title = "Show Traps and Teslas Enabler!"
+	If p.SdkVersion > 19 Then
+		Banner.Initialize("Banner","ca-app-pub-4173348573252986/9546639356")
+		Banner.LoadAd
+		Activity.AddView(Banner,0%x,90%y,100%x,10%y)
+		
+		Interstitial.Initialize("Interstitial","ca-app-pub-4173348573252986/3500105755")
+		Interstitial.LoadAd
+		t.Initialize("t",500)
+		t.Enabled = False
+		t1.Initialize("t1",15000)
+		t1.Enabled = True
+	End If
+	
+	bbg.Initialize(LoadBitmap(File.DirAssets,"root.png"))
+	b1bg.Initialize(LoadBitmap(File.DirAssets,"trap.png"))
+	
+b.Initialize("b")
+b.Background = bbg
+
+b1.Initialize("b1")
+b1.Background = b1bg
+
+Activity.AddView(b,20%x,20%y,60%x,13%y)
+Activity.AddView(b1,20%x,(b.Height+b.Top)+5%y,60%x,13%y)
+End Sub
+
+Sub ani_End
+	ani1.Run("Traps, Bomb, Teslas!!",lb2)
+	ani1.Endable = True
+End Sub
+Sub b_Click
+	If p.SdkVersion > 19 Then
+		t.Enabled = True
+	End If
+	
+	ml.GetRoot
+	If ml.HaveRoot Then
+		Msgbox("Congratulations!" & CRLF & "Your Device is Rooted","Attention!")
+		Else
+			Msgbox("Your device is not have Root Access!","Attention!")
+	End If
+End Sub
+
+Sub b1_Click
+	If p.SdkVersion > 19 Then
+		t.Enabled = True
+	End If
+	
+		ml.GetRoot
+	If ml.HaveRoot Then
+		StartActivity(Install)
+		Else
+			Msgbox("Your device is not have Root Access!","Attention!")
+	End If
+End Sub
+
+Sub t_Tick
+	If Interstitial.Status=Interstitial.Status_AdReadyToShow Then
+		Interstitial.Show
+	End If
+	
+	If Interstitial.Status=Interstitial.Status_Dismissed Then
+		Interstitial.LoadAd
+	End If
+	t.Enabled = False
+End Sub
+
+Sub t1_Tick
+	If Interstitial.Status=Interstitial.Status_AdReadyToShow Then
+		Interstitial.Show
+	End If
+	
+	If Interstitial.Status=Interstitial.Status_Dismissed Then
+		Interstitial.LoadAd
+	End If
+End Sub
+
+Sub Activity_Resume
+	
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
